@@ -1,71 +1,66 @@
-import conexao from "../config/db.js";
+import {
+  findAllNotas,
+  createNota,
+  updateNota,
+  deleteNota
+} from "../models/notasModel.js";
 
 export const listarNotas = async (req, res) => {
-  let conn;
   try {
-    conn = await conexao.getConnection();
-
-    const [data] = await conn.query(`
-      SELECT n.id, a.nome AS aluno, d.nome AS disciplina, n.nota
-      FROM notas n
-      LEFT JOIN alunos a ON n.aluno_id = a.id
-      LEFT JOIN disciplinas d ON n.disciplina_id = d.id
-    `);
-
+    const data = await findAllNotas();
     res.json(data);
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const criarNota = async (req, res) => {
-  let conn;
   try {
-    const { aluno_id, disciplina_id, nota } = req.body;
+    const { aluno_id, disciplina_id, nota, bimestre, observacao } = req.body;
 
-    conn = await conexao.getConnection();
+    if (!aluno_id || !disciplina_id || nota == null) {
+      return res.status(400).json({
+        erro: "Aluno, disciplina e nota são obrigatórios"
+      });
+    }
 
-    await conn.query(
-      "INSERT INTO notas (aluno_id, disciplina_id, nota) VALUES (?, ?, ?)",
-      [aluno_id, disciplina_id, nota]
-    );
+    await createNota({
+      aluno_id,
+      disciplina_id,
+      nota,
+      bimestre,
+      observacao
+    });
 
     res.status(201).json({ mensagem: "Nota criada" });
-  } finally {
-    if (conn) conn.release();
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const atualizarNota = async (req, res) => {
-  let conn;
   try {
     const { id } = req.params;
-    const { nota } = req.body;
 
-    conn = await conexao.getConnection();
+    await updateNota(id, req.body);
 
-    await conn.query(
-      "UPDATE notas SET nota=? WHERE id=?",
-      [nota, id]
-    );
+    res.json({ mensagem: "Nota atualizada" });
 
-    res.json({ mensagem: "Atualizado" });
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const deletarNota = async (req, res) => {
-  let conn;
   try {
     const { id } = req.params;
 
-    conn = await conexao.getConnection();
+    await deleteNota(id);
 
-    await conn.query("DELETE FROM notas WHERE id=?", [id]);
+    res.json({ mensagem: "Nota deletada" });
 
-    res.json({ mensagem: "Deletado" });
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };

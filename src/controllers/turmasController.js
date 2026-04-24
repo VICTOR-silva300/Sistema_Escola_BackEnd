@@ -1,50 +1,53 @@
-import conexao from "../config/db.js";
+import { 
+   createTurma,
+   findAllTurmas,
+   updateTurma,
+   deleteTurma } from "../models/turmasModel.js";
 
 export const listarTurmas = async (req, res) => {
-  let conn;
   try {
-    conn = await conexao.getConnection();
-
-    const [data] = await conn.query("SELECT * FROM turmas");
-
+    const data = await findAllTurmas();
     res.json(data);
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const criarTurma = async (req, res) => {
-  let conn;
   try {
-    const { nome, ano } = req.body;
+    const { nome, ano_letivo, professor_id } = req.body;
 
-    conn = await conexao.getConnection();
+    if (!nome || !ano_letivo) {
+      return res.status(400).json({ erro: "Nome e ano são obrigatórios" });
+    }
 
-    await conn.query(
-      "INSERT INTO turmas (nome, ano) VALUES (?, ?)",
-      [nome, ano]
-    );
+    await createTurmaModel(nome, ano_letivo, professor_id);
 
     res.status(201).json({ mensagem: "Turma criada" });
-  } finally {
-    if (conn) conn.release();
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const atualizarTurma = async (req, res) => {
   let conn;
+
   try {
     const { id } = req.params;
-    const { nome, ano } = req.body;
+    const { nome, ano_letivo, professor_id } = req.body;
 
     conn = await conexao.getConnection();
 
     await conn.query(
-      "UPDATE turmas SET nome=?, ano=? WHERE id=?",
-      [nome, ano, id]
+      "UPDATE turmas SET nome=?, ano_letivo=?, professor_id=? WHERE id=?",
+      [nome, ano_letivo, professor_id ?? null, id]
     );
 
-    res.json({ mensagem: "Atualizado" });
+    res.json({ mensagem: "Turma atualizada" });
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   } finally {
     if (conn) conn.release();
   }
@@ -52,6 +55,7 @@ export const atualizarTurma = async (req, res) => {
 
 export const deletarTurma = async (req, res) => {
   let conn;
+
   try {
     const { id } = req.params;
 
@@ -59,7 +63,10 @@ export const deletarTurma = async (req, res) => {
 
     await conn.query("DELETE FROM turmas WHERE id=?", [id]);
 
-    res.json({ mensagem: "Deletado" });
+    res.json({ mensagem: "Turma deletada" });
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   } finally {
     if (conn) conn.release();
   }

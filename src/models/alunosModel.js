@@ -5,12 +5,75 @@ export const findAllAlunos = async () => {
 
   try {
     const [rows] = await conn.query(`
-      SELECT a.id, a.nome, t.nome AS turma
+      SELECT 
+        a.id,
+        a.nome,
+        a.cpf,
+        a.email,
+        a.telefone,
+        a.status,
+        a.turma_id,
+        t.nome AS turma
       FROM alunos a
       LEFT JOIN turmas t ON a.turma_id = t.id
     `);
 
     return rows;
+  } finally {
+    conn.release();
+  }
+};
+
+export const createAluno = async (aluno) => {
+  const conn = await conexao.getConnection();
+
+  try {
+    await conn.query(
+      `INSERT INTO alunos 
+      (nome, cpf, email, telefone, turma_id, status)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        aluno.nome,
+        aluno.cpf,
+        aluno.email,
+        aluno.telefone,
+        aluno.turma_id ?? null,
+        aluno.status ?? "ativo"
+      ]
+    );
+  } finally {
+    conn.release();
+  }
+};
+
+export const updateAluno = async (id, aluno) => {
+  const conn = await conexao.getConnection();
+
+  try {
+    await conn.query(
+      `UPDATE alunos 
+       SET nome=?, cpf=?, email=?, telefone=?, turma_id=?, status=? 
+       WHERE id=?`,
+      [
+        aluno.nome,
+        aluno.cpf,
+        aluno.email,
+        aluno.telefone,
+        aluno.turma_id ?? null,
+        aluno.status,
+        id
+      ]
+    );
+  } finally {
+    conn.release();
+  }
+};
+
+export const deleteAluno = async (id) => {
+  const conn = await conexao.getConnection();
+
+  try {
+    await conn.query("DELETE FROM alunos WHERE id=?", [id]);
   } finally {
     conn.release();
   }

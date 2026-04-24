@@ -1,70 +1,65 @@
-import conexao from "../config/db.js";
+import {
+  findAllAlunos,
+  createAluno,
+  updateAluno,
+  deleteAluno
+} from "../models/alunosModel.js";
 
 export const listarAlunos = async (req, res) => {
-  let conn;
   try {
-    conn = await conexao.getConnection();
-
-    const [data] = await conn.query(`
-      SELECT a.id, a.nome, t.nome AS turma
-      FROM alunos a
-      LEFT JOIN turmas t ON a.turma_id = t.id
-    `);
-
+    const data = await findAllAlunos();
     res.json(data);
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const criarAluno = async (req, res) => {
-  let conn;
   try {
-    const { nome, turma_id } = req.body;
+    const { nome, cpf, email, telefone, turma_id, status } = req.body;
 
-    conn = await conexao.getConnection();
+    if (!nome || !cpf) {
+      return res.status(400).json({ erro: "Nome e CPF obrigatórios" });
+    }
 
-    await conn.query(
-      "INSERT INTO alunos (nome, turma_id) VALUES (?, ?)",
-      [nome, turma_id]
-    );
+    await createAluno({
+      nome,
+      cpf,
+      email,
+      telefone,
+      turma_id,
+      status
+    });
 
     res.status(201).json({ mensagem: "Aluno criado" });
-  } finally {
-    if (conn) conn.release();
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const atualizarAluno = async (req, res) => {
-  let conn;
   try {
     const { id } = req.params;
-    const { nome, turma_id } = req.body;
 
-    conn = await conexao.getConnection();
+    await updateAluno(id, req.body);
 
-    await conn.query(
-      "UPDATE alunos SET nome=?, turma_id=? WHERE id=?",
-      [nome, turma_id, id]
-    );
+    res.json({ mensagem: "Aluno atualizado" });
 
-    res.json({ mensagem: "Atualizado" });
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 
 export const deletarAluno = async (req, res) => {
-  let conn;
   try {
     const { id } = req.params;
 
-    conn = await conexao.getConnection();
+    await deleteAluno(id);
 
-    await conn.query("DELETE FROM alunos WHERE id=?", [id]);
+    res.json({ mensagem: "Aluno deletado" });
 
-    res.json({ mensagem: "Deletado" });
-  } finally {
-    if (conn) conn.release();
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
