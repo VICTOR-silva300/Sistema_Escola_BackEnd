@@ -137,6 +137,46 @@ router.put("/:id", verificarToken, atualizarAluno);
  */
 router.delete("/:id", verificarToken, deletarAluno);
 
-router.get("/", verificarToken, listarAlunosComTurma);
+/**
+ * @swagger
+ * /alunos/alunos-turma:
+ *   get:
+ *     summary: Lista alunos com suas respectivas turmas
+ *     tags: [Alunos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de alunos com turmas retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   nome:
+ *                     type: string
+ *                   cpf:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   telefone:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                   turma:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       nome:
+ *                         type: string
+ *                       ano_letivo:
+ *                         type: string
+ */
+router.get("/alunos-turma", verificarToken, listarAlunosComTurma);
 
 export default router;

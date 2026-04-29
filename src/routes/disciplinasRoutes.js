@@ -115,6 +115,44 @@ router.put("/:id", verificarToken, atualizarDisciplina);
  */
 router.delete("/:id", verificarToken, deletarDisciplina);
 
-router.get("/", verificarToken, listarDisciplinasComNotas);
+/**
+ * @swagger
+ * /disciplinas/com-notas:
+ *   get:
+ *     summary: Lista disciplinas com suas respectivas notas
+ *     tags: [Disciplinas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de disciplinas com notas retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   nome:
+ *                     type: string
+ *                   carga_horaria:
+ *                     type: integer
+ *                   notas:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         aluno_id:
+ *                           type: integer
+ *                         nota:
+ *                           type: number
+ *                         bimestre:
+ *                           type: string
+ */
+router.get("/com-notas", verificarToken, listarDisciplinasComNotas);
 
 export default router;

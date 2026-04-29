@@ -133,6 +133,49 @@ router.put("/:id", verificarToken, atualizarNota);
  */
 router.delete("/:id", verificarToken, deletarNota);
 
-router.get("/", verificarToken, listarNotasComJoin);
+/**
+ * @swagger
+ * /notas/com-join:
+ *   get:
+ *     summary: Lista notas com dados do aluno e disciplina (JOIN)
+ *     tags: [Notas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de notas com relacionamento retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   nota:
+ *                     type: number
+ *                   bimestre:
+ *                     type: string
+ *                   observacao:
+ *                     type: string
+ *                   aluno:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       nome:
+ *                         type: string
+ *                   disciplina:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       nome:
+ *                         type: string
+ *                       carga_horaria:
+ *                         type: integer
+ */
+router.get("/com-join", verificarToken, listarNotasComJoin);
 
 export default router;

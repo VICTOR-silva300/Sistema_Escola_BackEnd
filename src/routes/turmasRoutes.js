@@ -120,6 +120,42 @@ router.put("/:id", verificarToken, atualizarTurma);
  */
 router.delete("/:id", verificarToken, deletarTurma);
 
-router.get("/", verificarToken, listarTurmasComProfessor);
+/**
+ * @swagger
+ * /turmas/com-professor:
+ *   get:
+ *     summary: Lista turmas com seus respectivos professores
+ *     tags: [Turmas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de turmas com professores retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   nome:
+ *                     type: string
+ *                   ano_letivo:
+ *                     type: string
+ *                   professor:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       nome:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       especialidade:
+ *                         type: string
+ */
+router.get("/com-professor", verificarToken, listarTurmasComProfessor);
 
 export default router;
