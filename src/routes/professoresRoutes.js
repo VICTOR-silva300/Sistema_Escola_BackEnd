@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarProfessores,
+  listarProfessoresComTurmas,
   criarProfessor,
   atualizarProfessor,
   deletarProfessor
@@ -122,5 +123,7 @@ router.put("/:id", verificarToken, atualizarProfessor);
  *         description: Professor removido com sucesso
  */
 router.delete("/:id", verificarToken, deletarProfessor);
+
+router.get("/", verificarToken,  listarProfessoresComTurmas);
 
 export default router;

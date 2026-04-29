@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarDisciplinas,
+  listarDisciplinasComNotas,
   criarDisciplina,
   atualizarDisciplina,
   deletarDisciplina
@@ -113,5 +114,7 @@ router.put("/:id", verificarToken, atualizarDisciplina);
  *         description: Disciplina removida com sucesso
  */
 router.delete("/:id", verificarToken, deletarDisciplina);
+
+router.get("/", verificarToken, listarDisciplinasComNotas);
 
 export default router;

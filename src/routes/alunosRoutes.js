@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarAlunos,
+  listarAlunosComTurma,
   criarAluno,
   atualizarAluno,
   deletarAluno
@@ -135,5 +136,7 @@ router.put("/:id", verificarToken, atualizarAluno);
  *         description: Aluno removido com sucesso
  */
 router.delete("/:id", verificarToken, deletarAluno);
+
+router.get("/", verificarToken, listarAlunosComTurma);
 
 export default router;

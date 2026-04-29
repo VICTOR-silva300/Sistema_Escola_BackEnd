@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarNotas,
+  listarNotasComJoin,
   criarNota,
   atualizarNota,
   deletarNota
@@ -131,5 +132,7 @@ router.put("/:id", verificarToken, atualizarNota);
  *         description: Nota removida com sucesso
  */
 router.delete("/:id", verificarToken, deletarNota);
+
+router.get("/", verificarToken, listarNotasComJoin);
 
 export default router;

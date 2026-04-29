@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarTurmas,
+  listarTurmasComProfessor,
   criarTurma,
   atualizarTurma,
   deletarTurma
@@ -118,5 +119,7 @@ router.put("/:id", verificarToken, atualizarTurma);
  *         description: Turma removida com sucesso
  */
 router.delete("/:id", verificarToken, deletarTurma);
+
+router.get("/", verificarToken, listarTurmasComProfessor);
 
 export default router;
