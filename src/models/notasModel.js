@@ -26,7 +26,7 @@ export const findAllNotas = async () => {
 };
 
 
-export const findNotasComAlunoEDisciplina = async () => {
+export const findNotasComAlunoeDisciplina = async () => {
   const conn = await conexao.getConnection();
 
   try {
