@@ -1,7 +1,7 @@
 import {
   createTurma,
   findAllTurmas,
-  listarTurmasComProfessor,
+  findTurmasComProfessor,
   updateTurma,
   deleteTurma
 } from "../models/turmasModel.js";
