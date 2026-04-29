@@ -158,4 +158,4 @@ router.delete("/:id", verificarToken, deletarTurma);
  */
 router.get("/com-professor", verificarToken, listarTurmasComProfessor);
 
-export default router;
+export default router;      
