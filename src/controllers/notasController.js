@@ -1,5 +1,6 @@
 import {
   findAllNotas,
+  findNotasComAlunoEDisciplina,
   createNota,
   updateNota,
   deleteNota
@@ -14,6 +15,15 @@ export const listarNotas = async (req, res) => {
   }
 };
 
+export const listarNotasComJoin = async (req, res) => {
+  try {
+    const data = await findNotasComAlunoEDisciplina();
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).json({ erro: error.message });
+  }
+};
+
 export const criarNota = async (req, res) => {
   try {
     const { aluno_id, disciplina_id, nota, bimestre, observacao } = req.body;
@@ -24,18 +34,21 @@ export const criarNota = async (req, res) => {
       });
     }
 
-    await createNota({
+    const id = await createNota({
       aluno_id,
       disciplina_id,
       nota,
-      bimestre,
+      bimestre: bimestre ?? 1,
       observacao
     });
 
-    res.status(201).json({ mensagem: "Nota criada" });
+    return res.status(201).json({
+      mensagem: "Nota criada",
+      id
+    });
 
   } catch (error) {
-    res.status(500).json({ erro: error.message });
+    return res.status(500).json({ erro: error.message });
   }
 };
 
@@ -43,7 +56,11 @@ export const atualizarNota = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await updateNota(id, req.body);
+    const result = await updateNota(id, req.body);
+
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({ erro: "Nota não encontrada" });
+    }
 
     res.json({ mensagem: "Nota atualizada" });
 

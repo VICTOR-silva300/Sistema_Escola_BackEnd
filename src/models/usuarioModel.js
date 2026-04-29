@@ -4,9 +4,37 @@ export const findAllUsuarios = async () => {
   const conn = await conexao.getConnection();
 
   try {
-    const [rows] = await conn.query(
-      "SELECT id, nome, email, perfil, criado_em FROM usuarios"
-    );
+    const [rows] = await conn.query(`
+      SELECT 
+        u.id,
+        u.nome,
+        u.email,
+        u.perfil,
+        u.criado_em
+      FROM usuarios u
+    `);
+
+    return rows;
+  } finally {
+    conn.release();
+  }
+};
+
+
+export const findUsuariosComPerfil = async () => {
+  const conn = await conexao.getConnection();
+
+  try {
+    const [rows] = await conn.query(`
+      SELECT 
+        u.id,
+        u.nome,
+        u.email,
+        u.perfil
+      FROM usuarios u
+      INNER JOIN usuarios u2 ON u.perfil = u2.perfil
+    `);
+
     return rows;
   } finally {
     conn.release();

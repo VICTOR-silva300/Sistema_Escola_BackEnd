@@ -1,5 +1,6 @@
 import {
   findAllAlunos,
+  findAlunosComTurma,
   createAluno,
   updateAluno,
   deleteAluno
@@ -8,6 +9,15 @@ import {
 export const listarAlunos = async (req, res) => {
   try {
     const data = await findAllAlunos();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+};
+
+export const listarAlunosComTurma = async (req, res) => {
+  try {
+    const data = await findAlunosComTurma();
     res.json(data);
   } catch (error) {
     res.status(500).json({ erro: error.message });

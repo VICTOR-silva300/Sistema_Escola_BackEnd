@@ -4,39 +4,43 @@ import jwt from "jsonwebtoken";
 import { jwtConfig } from "../config/jwt.js";
 
 export const registrar = async (req, res) => {
-    let conn;
+  let conn;
 
-    console.log(req.body);
-    try {
-        const { nome, email, senha, perfil } = req.body;
+  try {
+    const { nome, email, senha, perfil } = req.body;
 
-        if (!nome || !email || !senha) {
-            return res.status(400).json({ messagem: "Nome, email e senha são obrigatórios" })
-        }
-
-        conn = await conexao.getConnection();
-
-        const [rows] = await conn.query("SELECT * FROM usuarios WHERE email = ?", [email]);
-
-        if (rows.length > 0) {
-            return res.status(400).json({ messagem: "Email ja cadastrado" })
-        }
-
-        const senhaCriptografa = await bcrypt.hash(senha, 10);
-
-        await conn.query(`INSERT INTO usuarios (nome, email, senha, perfil) 
-                        VALUES (?, ?, ?, ?)`, [nome, email, senhaCriptografa, perfil || "admin"])
-
-        res.status(201).json({ mensagem: "Usuário criado com sucesso" });
-    } catch (error) {
-        res.status(500).json({
-            mensagem: "Erro ao registrar",
-            erro: error.message
-        });
-    } finally {
-        if (conn) conn.release();
+    if (!nome || !email || !senha) {
+      return res.status(400).json({ mensagem: "Nome, email e senha são obrigatórios" });
     }
-}
+
+    conn = await conexao.getConnection();
+
+    const [existente] = await conn.query(
+      "SELECT id FROM usuarios WHERE email = ?",
+      [email]
+    );
+
+    if (existente.length > 0) {
+      return res.status(400).json({ mensagem: "Email já cadastrado" });
+    }
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+    await conn.query(
+      "INSERT INTO usuarios (nome, email, senha, perfil) VALUES (?, ?, ?, ?)",
+      [nome, email, senhaCriptografada, perfil || "admin"]
+    );
+
+    res.status(201).json({ mensagem: "Usuário criado com sucesso" });
+  } catch (error) {
+    res.status(500).json({
+      mensagem: "Erro ao registrar usuário",
+      erro: error.message
+    });
+  } finally {
+    if (conn) conn.release();
+  }
+};
 
 export const login = async (req, res) => {
   let conn;
@@ -51,23 +55,15 @@ export const login = async (req, res) => {
     conn = await conexao.getConnection();
 
     const [rows] = await conn.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+      "SELECT id, nome, email, senha, perfil FROM usuarios WHERE email = ?",
       [email]
     );
-
-    console.log(rows)
 
     if (rows.length === 0) {
       return res.status(404).json({ mensagem: "Usuário não encontrado" });
     }
 
     const usuario = rows[0];
-
-    console.log(usuario)
-
-    if (!usuario.senha) {
-      return res.status(500).json({ mensagem: "Senha do usuário não encontrada no banco" });
-    }
 
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
 

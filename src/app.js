@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+dotenv.config({ quiet: true });
 
 import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./config/swagger.js";
+import swaggerSpec from "./swagger.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
@@ -14,6 +15,7 @@ import alunoRoutes from "./routes/alunosRoutes.js";
 import notaRoutes from "./routes/notasRoutes.js";
 
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());

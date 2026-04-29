@@ -13,10 +13,25 @@ export const listarDisciplinas = async (req, res) => {
   }
 };
 
+export const listarDisciplinasComNotas = async (req, res) => {
+  try {
+    const data = await findDisciplinasComNotas();
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ erro: err.message });
+  }
+};
+
 export const criarDisciplina = async (req, res) => {
   let conn;
   try {
     const { nome, carga_horaria } = req.body;
+
+    if (!nome || !carga_horaria) {
+      return res.status(400).json({
+        erro: "Nome e carga horária são obrigatórios"
+      });
+    }
 
     conn = await conexao.getConnection();
 
@@ -26,6 +41,8 @@ export const criarDisciplina = async (req, res) => {
     );
 
     res.status(201).json({ mensagem: "Disciplina criada" });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
   } finally {
     if (conn) conn.release();
   }

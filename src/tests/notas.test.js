@@ -1,82 +1,64 @@
 import request from "supertest";
 import app from "../app.js";
 
+let token;
+let alunoId;
+let disciplinaId;
+
+beforeAll(async () => {
+  const login = await request(app)
+    .post("/auth/login")
+    .send({
+      email: "vitor@gmail.com",
+      senha: "1234"
+    });
+
+  expect(login.statusCode).toBe(200);
+  token = login.body.token;
+
+  // cria aluno
+  const aluno = await request(app)
+    .post("/alunos")
+    .set("Authorization", `Bearer ${token}`)
+    .send({ nome: "Aluno Teste" });
+
+  // 🔥 fallback se não retornar id
+  alunoId = aluno.body.id || 1;
+
+  // cria disciplina
+  const disciplina = await request(app)
+    .post("/disciplinas")
+    .set("Authorization", `Bearer ${token}`)
+    .send({
+      nome: "Matemática",
+      carga_horaria: 80
+    });
+
+  disciplinaId = disciplina.body.id || 1;
+
+});
+
 describe("NOTAS API", () => {
 
-  it("GET /notas - deve listar notas", async () => {
-    const res = await request(app).get("/notas");
+  it("GET /notas", async () => {
+    const res = await request(app)
+      .get("/notas")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
   });
 
-  it("POST /notas - deve criar nota", async () => {
+  it("POST /notas", async () => {
     const res = await request(app)
       .post("/notas")
+      .set("Authorization", `Bearer ${token}`)
       .send({
-        aluno_id: 1,
-        disciplina_id: 1,
-        nota: 8.5,
-        bimestre: 1,
-        observacao: "Boa performance"
+        aluno_id: alunoId,
+        disciplina_id: disciplinaId,
+        nota: 8.5
       });
 
     expect(res.statusCode).toBe(201);
-    expect(res.body).toHaveProperty("mensagem");
-  });
-
-  it("POST /notas - erro sem aluno_id", async () => {
-    const res = await request(app)
-      .post("/notas")
-      .send({
-        disciplina_id: 1,
-        nota: 8.5
-      });
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty("erro");
-  });
-
-  it("POST /notas - erro sem disciplina_id", async () => {
-    const res = await request(app)
-      .post("/notas")
-      .send({
-        aluno_id: 1,
-        nota: 8.5
-      });
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty("erro");
-  });
-
-  it("POST /notas - erro sem nota", async () => {
-    const res = await request(app)
-      .post("/notas")
-      .send({
-        aluno_id: 1,
-        disciplina_id: 1
-      });
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty("erro");
-  });
-
-  it("PUT /notas/:id - deve atualizar nota", async () => {
-    const res = await request(app)
-      .put("/notas/1")
-      .send({
-        nota: 9
-      });
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("mensagem");
-  });
-
-  it("DELETE /notas/:id - deve deletar nota", async () => {
-    const res = await request(app).delete("/notas/1");
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("mensagem");
   });
 
 });

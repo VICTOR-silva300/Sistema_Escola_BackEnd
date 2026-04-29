@@ -1,5 +1,6 @@
 import {
   findAllProfessores,
+  findProfessoresComTurmas,
   createProfessor,
   updateProfessor,
   deleteProfessor
@@ -8,9 +9,18 @@ import {
 export const listarProfessores = async (req, res) => {
   try {
     const professores = await findAllProfessores();
-    res.json(professores);
+    return res.json(professores);
   } catch (err) {
-    res.status(500).json({ erro: err.message });
+    return res.status(500).json({ erro: err.message });
+  }
+};
+
+export const listarProfessoresComTurmas = async (req, res) => {
+  try {
+    const data = await findProfessoresComTurmas();
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ erro: err.message });
   }
 };
 
@@ -22,11 +32,15 @@ export const criarProfessor = async (req, res) => {
       return res.status(400).json({ erro: "Nome é obrigatório" });
     }
 
-    await createProfessor(nome, email, telefone, especialidade);
+    const id = await createProfessor(nome, email, telefone, especialidade);
 
-    res.status(201).json({ mensagem: "Professor criado com sucesso" });
+    return res.status(201).json({
+      mensagem: "Professor criado com sucesso",
+      id
+    });
+
   } catch (err) {
-    res.status(500).json({ erro: err.message });
+    return res.status(500).json({ erro: err.message });
   }
 };
 
@@ -35,11 +49,16 @@ export const atualizarProfessor = async (req, res) => {
     const { id } = req.params;
     const { nome, email, telefone, especialidade } = req.body;
 
-    await updateProfessor(id, nome, email, telefone, especialidade);
+    const ok = await updateProfessor(id, nome, email, telefone, especialidade);
 
-    res.json({ mensagem: "Professor atualizado" });
+    if (!ok) {
+      return res.status(404).json({ erro: "Professor não encontrado" });
+    }
+
+    return res.json({ mensagem: "Professor atualizado" });
+
   } catch (err) {
-    res.status(500).json({ erro: err.message });
+    return res.status(500).json({ erro: err.message });
   }
 };
 
@@ -47,10 +66,17 @@ export const deletarProfessor = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await deleteProfessor(id);
+    const result = await deleteProfessor(id);
 
-    res.json({ mensagem: "Professor deletado" });
+    if (result.blocked) {
+      return res.status(400).json({
+        erro: "Professor vinculado a turmas"
+      });
+    }
+
+    return res.json({ mensagem: "Professor deletado" });
+
   } catch (err) {
-    res.status(500).json({ erro: err.message });
+    return res.status(500).json({ erro: err.message });
   }
 };
