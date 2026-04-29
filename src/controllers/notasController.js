@@ -1,6 +1,6 @@
 import {
   findAllNotas,
-  findNotasComAlunoEDisciplina,
+  findNotasComAlunoeDisciplina,
   createNota,
   updateNota,
   deleteNota
@@ -17,7 +17,7 @@ export const listarNotas = async (req, res) => {
 
 export const listarNotasComJoin = async (req, res) => {
   try {
-    const data = await findNotasComAlunoEDisciplina();
+    const data = await findNotasComAlunoeDisciplina();
     return res.json(data);
   } catch (error) {
     return res.status(500).json({ erro: error.message });
