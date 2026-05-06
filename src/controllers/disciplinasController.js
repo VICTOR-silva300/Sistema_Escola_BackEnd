@@ -1,4 +1,5 @@
 import conexao from "../config/db.js";
+import { findDisciplinasComNotas } from "../models/disciplinasModel.js";
 
 export const listarDisciplinas = async (req, res) => {
   let conn;

@@ -153,6 +153,6 @@ router.delete("/:id", verificarToken, deletarDisciplina);
  *                         bimestre:
  *                           type: string
  */
-router.get("/com-notas", verificarToken, listarDisciplinasComNotas);
+router.get("/com-notas-disciplinas", verificarToken, listarDisciplinasComNotas);
 
 export default router;

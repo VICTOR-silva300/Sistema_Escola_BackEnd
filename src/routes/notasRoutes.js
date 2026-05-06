@@ -176,6 +176,6 @@ router.delete("/:id", verificarToken, deletarNota);
  *                       carga_horaria:
  *                         type: integer
  */
-router.get("/com-join", verificarToken, listarNotasComJoin);
+router.get("/com-notas-lista", verificarToken, listarNotasComJoin);
 
 export default router;
