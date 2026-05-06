@@ -16,16 +16,13 @@ beforeAll(async () => {
   expect(login.statusCode).toBe(200);
   token = login.body.token;
 
-  // cria aluno
   const aluno = await request(app)
     .post("/alunos")
     .set("Authorization", `Bearer ${token}`)
     .send({ nome: "Aluno Teste" });
 
-  // 🔥 fallback se não retornar id
   alunoId = aluno.body.id || 1;
 
-  // cria disciplina
   const disciplina = await request(app)
     .post("/disciplinas")
     .set("Authorization", `Bearer ${token}`)
