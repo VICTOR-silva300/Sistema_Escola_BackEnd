@@ -45,6 +45,32 @@ export const findAlunosComTurma = async () => {
   }
 };
 
+export const findAlunoById = async (id) => {
+  const conn = await conexao.getConnection();
+
+  try {
+    const [rows] = await conn.query(
+      `SELECT 
+        a.id,
+        a.nome,
+        a.cpf,
+        a.email,
+        a.telefone,
+        a.status,
+        a.turma_id,
+        t.nome AS turma
+       FROM alunos a
+       LEFT JOIN turmas t ON a.turma_id = t.id
+       WHERE a.id = ?`,
+      [id]
+    );
+
+    return rows[0]; 
+  } finally {
+    conn.release();
+  }
+};
+
 export const createAluno = async (aluno) => {
   const conn = await conexao.getConnection();
 

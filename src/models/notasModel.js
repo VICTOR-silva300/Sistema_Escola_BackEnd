@@ -48,6 +48,33 @@ export const findNotasComAlunoeDisciplina = async () => {
   }
 };
 
+export const findNotaById = async (id) => {
+  const conn = await conexao.getConnection();
+
+  try {
+    const [rows] = await conn.query(
+      `SELECT 
+        n.id,
+        n.nota,
+        n.bimestre,
+        n.observacao,
+        n.aluno_id,
+        a.nome AS aluno,
+        n.disciplina_id,
+        d.nome AS disciplina
+       FROM notas n
+       LEFT JOIN alunos a ON a.id = n.aluno_id
+       LEFT JOIN disciplinas d ON d.id = n.disciplina_id
+       WHERE n.id = ?`,
+      [id]
+    );
+
+    return rows[0];
+  } finally {
+    conn.release();
+  }
+};
+
 export const createNota = async (nota) => {
   const conn = await conexao.getConnection();
 

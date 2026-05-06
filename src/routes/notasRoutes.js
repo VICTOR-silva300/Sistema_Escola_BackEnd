@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   listarNotas,
   listarNotasComJoin,
+  listarNotaPorId,
   criarNota,
   atualizarNota,
   deletarNota
@@ -132,6 +133,29 @@ router.put("/:id", verificarToken, atualizarNota);
  *         description: Nota removida com sucesso
  */
 router.delete("/:id", verificarToken, deletarNota);
+
+/**
+ * @swagger
+ * /notas/{id}:
+ *   get:
+ *     summary: Busca uma nota por ID
+ *     tags: [Notas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da nota
+ *     responses:
+ *       200:
+ *         description: Nota encontrada
+ *       404:
+ *         description: Nota não encontrada
+ */
+router.get("/:id", verificarToken, listarNotaPorId);
 
 /**
  * @swagger

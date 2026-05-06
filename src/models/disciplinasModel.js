@@ -37,7 +37,20 @@ export const findDisciplinasComNotas = async () => {
   }
 };
 
+export const findDisciplinaById = async (id) => {
+  const conn = await conexao.getConnection();
 
+  try {
+    const [rows] = await conn.query(
+      `SELECT * FROM disciplinas WHERE id = ?`,
+      [id]
+    );
+
+    return rows[0];
+  } finally {
+    conn.release();
+  }
+};
 
 
 export const createDisciplina = async (nome, carga_horaria) => {

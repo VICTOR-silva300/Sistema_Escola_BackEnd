@@ -1,6 +1,7 @@
 import {
   findAllNotas,
   findNotasComAlunoeDisciplina,
+  findNotaById,
   createNota,
   updateNota,
   deleteNota
@@ -21,6 +22,23 @@ export const listarNotasComJoin = async (req, res) => {
     return res.json(data);
   } catch (error) {
     return res.status(500).json({ erro: error.message });
+  }
+};
+
+export const listarNotaPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const nota = await findNotaById(id);
+
+    if (!nota) {
+      return res.status(404).json({ erro: "Nota não encontrada" });
+    }
+
+    res.json(nota);
+
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
   }
 };
 

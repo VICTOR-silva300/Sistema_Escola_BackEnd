@@ -1,6 +1,7 @@
 import {
   findAllAlunos,
   findAlunosComTurma,
+  findAlunoById,
   createAluno,
   updateAluno,
   deleteAluno
@@ -19,6 +20,23 @@ export const listarAlunosComTurma = async (req, res) => {
   try {
     const data = await findAlunosComTurma();
     res.json(data);
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+};
+
+export const listarAlunoPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const aluno = await findAlunoById(id);
+
+    if (!aluno) {
+      return res.status(404).json({ erro: "Aluno não encontrado" });
+    }
+
+    res.json(aluno);
+
   } catch (error) {
     res.status(500).json({ erro: error.message });
   }

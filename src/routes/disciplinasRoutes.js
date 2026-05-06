@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   listarDisciplinas,
   listarDisciplinasComNotas,
+  listarDisciplinaPorId,
   criarDisciplina,
   atualizarDisciplina,
   deletarDisciplina
@@ -154,5 +155,28 @@ router.delete("/:id", verificarToken, deletarDisciplina);
  *                           type: string
  */
 router.get("/com-notas-disciplinas", verificarToken, listarDisciplinasComNotas);
+
+/**
+ * @swagger
+ * /disciplinas/{id}:
+ *   get:
+ *     summary: Busca uma disciplina por ID
+ *     tags: [Disciplinas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da disciplina
+ *     responses:
+ *       200:
+ *         description: Disciplina encontrada
+ *       404:
+ *         description: Disciplina não encontrada
+ */
+router.get("/:id", verificarToken, listarDisciplinaPorId);
 
 export default router;

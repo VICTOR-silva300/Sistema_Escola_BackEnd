@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   listarProfessores,
   listarProfessoresComTurmas,
+  listarProfessorPorId,
   criarProfessor,
   atualizarProfessor,
   deletarProfessor
@@ -165,5 +166,28 @@ router.delete("/:id", verificarToken, deletarProfessor);
  *                           type: string
  */
 router.get("/por-turmas", verificarToken, listarProfessoresComTurmas);
+
+/**
+ * @swagger
+ * /professores/{id}:
+ *   get:
+ *     summary: Busca um professor por ID
+ *     tags: [Professores]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do professor
+ *     responses:
+ *       200:
+ *         description: Professor encontrado
+ *       404:
+ *         description: Professor não encontrado
+ */
+router.get("/:id", verificarToken, listarProfessorPorId);
 
 export default router;

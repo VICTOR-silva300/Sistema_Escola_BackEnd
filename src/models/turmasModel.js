@@ -43,6 +43,29 @@ export const findTurmasComProfessor = async () => {
   }
 };
 
+export const findTurmaById = async (id) => {
+  const conn = await conexao.getConnection();
+
+  try {
+    const [rows] = await conn.query(
+      `SELECT 
+        t.id,
+        t.nome,
+        t.ano_letivo,
+        t.professor_id,
+        COALESCE(p.nome, 'Sem professor') AS professor
+       FROM turmas t
+       LEFT JOIN professores p ON p.id = t.professor_id
+       WHERE t.id = ?`,
+      [id]
+    );
+
+    return rows[0];
+  } finally {
+    conn.release();
+  }
+};
+
 export const createTurma = async (nome, ano_letivo, professor_id) => {
   const conn = await conexao.getConnection();
 

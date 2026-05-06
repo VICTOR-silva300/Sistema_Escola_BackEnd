@@ -2,6 +2,7 @@ import {
   createTurma,
   findAllTurmas,
   findTurmasComProfessor,
+  findTurmaById,
   updateTurma,
   deleteTurma
 } from "../models/turmasModel.js";
@@ -19,6 +20,23 @@ export const listarTurmasComProfessor = async (req, res) => {
   try {
     const data = await findTurmasComProfessor();
     return res.json(data);
+  } catch (error) {
+    return res.status(500).json({ erro: error.message });
+  }
+};
+
+export const listarTurmaPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const turma = await findTurmaById(id);
+
+    if (!turma) {
+      return res.status(404).json({ erro: "Turma não encontrada" });
+    }
+
+    return res.json(turma);
+
   } catch (error) {
     return res.status(500).json({ erro: error.message });
   }

@@ -1,5 +1,5 @@
 import conexao from "../config/db.js";
-import { findDisciplinasComNotas } from "../models/disciplinasModel.js";
+import { findDisciplinasComNotas,findDisciplinaById } from "../models/disciplinasModel.js";
 
 export const listarDisciplinas = async (req, res) => {
   let conn;
@@ -20,6 +20,23 @@ export const listarDisciplinasComNotas = async (req, res) => {
     return res.json(data);
   } catch (err) {
     return res.status(500).json({ erro: err.message });
+  }
+};
+
+export const listarDisciplinaPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const disciplina = await findDisciplinaById(id);
+
+    if (!disciplina) {
+      return res.status(404).json({ erro: "Disciplina não encontrada" });
+    }
+
+    res.json(disciplina);
+
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
   }
 };
 

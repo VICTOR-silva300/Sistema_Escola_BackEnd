@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   listarAlunos,
   listarAlunosComTurma,
+  listarAlunoPorId,
   criarAluno,
   atualizarAluno,
   deletarAluno
@@ -137,6 +138,30 @@ router.put("/:id", verificarToken, atualizarAluno);
  */
 router.delete("/:id", verificarToken, deletarAluno);
 
+
+/**
+ * @swagger
+ * /alunos/{id}:
+ *   get:
+ *     summary: Busca um aluno por ID
+ *     tags: [Alunos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do aluno
+ *     responses:
+ *       200:
+ *         description: Aluno encontrado
+ *       404:
+ *         description: Aluno não encontrado
+ */
+router.get("/:id", verificarToken, listarAlunoPorId);
+
 /**
  * @swagger
  * /alunos/alunos-turma:
@@ -178,5 +203,6 @@ router.delete("/:id", verificarToken, deletarAluno);
  *                         type: string
  */
 router.get("/alunos-turma", verificarToken, listarAlunosComTurma);
+
 
 export default router;

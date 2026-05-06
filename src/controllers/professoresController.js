@@ -1,6 +1,7 @@
 import {
   findAllProfessores,
   findProfessoresComTurmas,
+  findProfessorById,
   createProfessor,
   updateProfessor,
   deleteProfessor
@@ -19,6 +20,23 @@ export const listarProfessoresComTurmas = async (req, res) => {
   try {
     const data = await findProfessoresComTurmas();
     return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ erro: err.message });
+  }
+};
+
+export const listarProfessorPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const professor = await findProfessorById(id);
+
+    if (!professor) {
+      return res.status(404).json({ erro: "Professor não encontrado" });
+    }
+
+    return res.json(professor);
+
   } catch (err) {
     return res.status(500).json({ erro: err.message });
   }
