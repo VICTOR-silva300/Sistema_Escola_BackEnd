@@ -24,7 +24,6 @@ export const findAllAlunos = async () => {
   }
 };
 
-
 export const findAlunosComTurma = async () => {
   const conn = await conexao.getConnection();
 
@@ -65,7 +64,8 @@ export const findAlunoById = async (id) => {
       [id]
     );
 
-    return rows[0]; 
+    return rows[0];
+
   } finally {
     conn.release();
   }
@@ -90,6 +90,7 @@ export const createAluno = async (aluno) => {
     );
 
     return result;
+
   } finally {
     conn.release();
   }
@@ -115,6 +116,7 @@ export const updateAluno = async (id, aluno) => {
     );
 
     return result;
+
   } finally {
     conn.release();
   }
@@ -130,6 +132,7 @@ export const deleteAluno = async (id) => {
     );
 
     return result;
+
   } finally {
     conn.release();
   }

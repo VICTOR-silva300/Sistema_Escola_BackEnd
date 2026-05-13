@@ -26,23 +26,26 @@ beforeAll(async () => {
 describe("ALUNOS API", () => {
 
   it("POST /alunos - deve criar aluno", async () => {
-  const res = await request(app)
-    .post("/alunos")
-    .set("Authorization", `Bearer ${token}`)
-    .send({
-      nome: "Aluno Teste",
-      cpf: Math.floor(Math.random() * 90000000000 + 10000000000).toString(),
-      email: `teste${Date.now()}@email.com`,
-      telefone: "999999999",
-      turma_id: null,
-      status: "ativo"
-    });
+    const res = await request(app)
+      .post("/alunos")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        nome: "Aluno Teste",
+        cpf: Math.floor(
+          Math.random() * 90000000000 + 10000000000
+        ).toString(),
+        email: `teste${Date.now()}@email.com`,
+        telefone: "999999999",
+        turma_id: null,
+        status: "ativo"
+      });
 
-  expect(res.statusCode).toBe(201);
-  expect(res.body).toHaveProperty("mensagem");
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty("mensagem");
+    expect(res.body).toHaveProperty("id");
 
-  alunoId = res.body.id || res.body.aluno?.id;
-});
+    alunoId = res.body.id;
+  });
 
   it("GET /alunos - deve listar alunos", async () => {
     const res = await request(app)
@@ -53,24 +56,37 @@ describe("ALUNOS API", () => {
     expect(Array.isArray(res.body)).toBe(true);
   });
 
-  it("PUT /alunos - deve atualizar aluno", async () => {
+  it("GET /alunos/:id - deve buscar aluno por id", async () => {
     const res = await request(app)
-      .put(`/alunos/${alunoId}`)
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        nome: "Aluno Atualizado",
-        cpf: `${Date.now()}${Math.random()}`,
-        email: `update${Date.now()}@email.com`,
-        telefone: "999999999",
-        turma_id: 1,
-        status: "ativo"
-      });
+      .get(`/alunos/${alunoId}`)
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("mensagem");
+    expect(res.body).toHaveProperty("id");
   });
 
-  it("DELETE /alunos - deve deletar aluno", async () => {
+  it("PUT /alunos/:id - deve atualizar aluno", async () => {
+  const res = await request(app)
+    .put(`/alunos/${alunoId}`)
+    .set("Authorization", `Bearer ${token}`)
+    .send({
+      nome: "Aluno Atualizado",
+      cpf: Math.floor(
+        Math.random() * 90000000000 + 10000000000
+      ).toString(),
+      email: `update${Date.now()}@email.com`,
+      telefone: "999999999",
+      turma_id: null,
+      status: "ativo"
+    });
+
+  console.log(res.body);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body).toHaveProperty("mensagem");
+});
+
+  it("DELETE /alunos/:id - deve deletar aluno", async () => {
     const res = await request(app)
       .delete(`/alunos/${alunoId}`)
       .set("Authorization", `Bearer ${token}`);

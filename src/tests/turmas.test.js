@@ -26,7 +26,6 @@ describe("TURMAS API", () => {
       .get("/turmas")
       .set("Authorization", `Bearer ${token}`);
 
-
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
   });
@@ -42,7 +41,7 @@ describe("TURMAS API", () => {
       });
 
     expect(res.statusCode).toBe(201);
-    expect(res.body).toHaveProperty("mensagem");
+    expect(res.body).toHaveProperty("id");
 
     turmaId = res.body.id;
   });
@@ -67,16 +66,15 @@ describe("TURMAS API", () => {
         nome: "Turma B"
       });
 
-
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty("erro");
   });
 
   it("PUT /turmas/:id - deve atualizar turma", async () => {
-    const id = turmaId || 1;
+    expect(turmaId).toBeDefined();
 
     const res = await request(app)
-      .put(`/turmas/${id}`)
+      .put(`/turmas/${turmaId}`)
       .set("Authorization", `Bearer ${token}`)
       .send({
         nome: "Turma Atualizada",
@@ -89,10 +87,10 @@ describe("TURMAS API", () => {
   });
 
   it("DELETE /turmas/:id - deve deletar turma", async () => {
-    const id = turmaId || 1;
+    expect(turmaId).toBeDefined();
 
     const res = await request(app)
-      .delete(`/turmas/${id}`)
+      .delete(`/turmas/${turmaId}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);

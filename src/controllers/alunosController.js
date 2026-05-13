@@ -50,7 +50,7 @@ export const criarAluno = async (req, res) => {
       return res.status(400).json({ erro: "Nome e CPF obrigatórios" });
     }
 
-    await createAluno({
+    const result = await createAluno({
       nome,
       cpf,
       email,
@@ -59,7 +59,10 @@ export const criarAluno = async (req, res) => {
       status
     });
 
-    res.status(201).json({ mensagem: "Aluno criado" });
+    res.status(201).json({
+      mensagem: "Aluno criado",
+      id: result.insertId
+    });
 
   } catch (error) {
     res.status(500).json({ erro: error.message });
@@ -75,6 +78,8 @@ export const atualizarAluno = async (req, res) => {
     res.json({ mensagem: "Aluno atualizado" });
 
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({ erro: error.message });
   }
 };
